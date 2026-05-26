@@ -1,33 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
+html { scroll-behavior: smooth; }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: #0a0a0f;
+  color: #e8e8f0;
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #111118; }
+::-webkit-scrollbar-thumb { background: #2a2a3e; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #00d4ff44; }
+
+::selection { background: #00d4ff33; color: #00d4ff; }
+
+/* Grid background pattern */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Glass card */
+.glass-card {
+  background: rgba(22, 22, 31, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+}
+
+/* Glow helpers */
+.glow-cyan   { box-shadow: 0 0 20px #00d4ff33, 0 0 40px #00d4ff11; }
+.glow-violet { box-shadow: 0 0 20px #7c3aed33, 0 0 40px #7c3aed11; }
+.glow-green  { box-shadow: 0 0 20px #00ff8833, 0 0 40px #00ff8811; }
+
+.text-glow-cyan  { text-shadow: 0 0 20px #00d4ff66; }
+.text-glow-green { text-shadow: 0 0 20px #00ff8866; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s;
+  border: none; outline: none;
+}
+.btn-primary  { background: #00d4ff22; color: #00d4ff; border: 1px solid #00d4ff44; }
+.btn-primary:hover  { background: #00d4ff33; box-shadow: 0 0 16px #00d4ff33; }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-green  { background: #00ff8822; color: #00ff88; border: 1px solid #00ff8844; }
+.btn-green:hover  { background: #00ff8833; }
+.btn-danger { background: #ff446622; color: #ff4466; border: 1px solid #ff446644; }
+.btn-danger:hover { background: #ff446633; }
+.btn-amber  { background: #ffb80022; color: #ffb800; border: 1px solid #ffb80044; }
+.btn-amber:hover  { background: #ffb80033; }
+.btn-violet { background: #7c3aed22; color: #a78bfa; border: 1px solid #7c3aed44; }
+.btn-violet:hover { background: #7c3aed33; }
+
+/* Range slider */
+input[type='range'] {
+  -webkit-appearance: none; height: 4px;
+  background: #2a2a3e; border-radius: 2px; outline: none; width: 100%;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px;
+  background: #00d4ff; border-radius: 50%;
+  cursor: pointer; box-shadow: 0 0 8px #00d4ff66;
+}
+
+/* Bar states */
+.bar-comparing { background: #ffb800 !important; box-shadow: 0 0 12px #ffb80066; }
+.bar-swapping  { background: #ff4466 !important; box-shadow: 0 0 12px #ff446666; }
+.bar-sorted    { background: #00ff88 !important; box-shadow: 0 0 12px #00ff8866; }
+.bar-pivot     { background: #7c3aed !important; box-shadow: 0 0 12px #7c3aed66; }
+
+/* Graph node states */
+.node-default { fill: #1e1e2e; stroke: #00d4ff;  stroke-width: 2; }
+.node-visited { fill: #7c3aed44; stroke: #7c3aed; stroke-width: 2; }
+.node-current { fill: #00d4ff33; stroke: #00d4ff; stroke-width: 3; }
+.node-path    { fill: #00ff8833; stroke: #00ff88; stroke-width: 3; }
+.node-start   { fill: #00ff8844; stroke: #00ff88; stroke-width: 3; }
+.node-end     { fill: #ff446644; stroke: #ff4466; stroke-width: 3; }
+
+/* Gradient border animation */
+@keyframes border-spin {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.gradient-border { position: relative; border-radius: 16px; }
+.gradient-border::before {
+  content: ''; position: absolute; inset: -1px; border-radius: 17px;
+  background: linear-gradient(135deg, #00d4ff, #7c3aed, #00ff88, #ffb800);
+  background-size: 300% 300%;
+  animation: border-spin 4s ease infinite;
+  z-index: -1; opacity: 0.5;
 }
