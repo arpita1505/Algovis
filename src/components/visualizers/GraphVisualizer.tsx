@@ -17,7 +17,7 @@ function getNodeColor(state: NodeState) {
   if (state === 'visited') return '#7c3aed33'
   if (state === 'current') return '#ffb80033'
   if (state === 'path')    return '#00d4ff33'
-  return '#1e1e2e'
+  return 'var(--border)'
 }
 function getNodeStroke(state: NodeState) {
   if (state === 'start')   return '#00ff88'
@@ -25,7 +25,7 @@ function getNodeStroke(state: NodeState) {
   if (state === 'visited') return '#7c3aed'
   if (state === 'current') return '#ffb800'
   if (state === 'path')    return '#00d4ff'
-  return '#2a2a3e'
+  return 'var(--border)'
 }
 
 const INIT_NODES: Node[] = [
@@ -70,6 +70,8 @@ export default function GraphVisualizer() {
   const [editMode, setEditMode] = useState<EditMode>('none')
   const [edgeFrom, setEdgeFrom] = useState<number|null>(null)
   const [edgeWeight, setEdgeWeight] = useState('1')
+  const [editingEdge, setEditingEdge] = useState<{from:number,to:number}|null>(null)
+  const [editWeight, setEditWeight] = useState('')
   const [nextId, setNextId] = useState(10)
   const stopRef = useRef(false)
   const svgRef = useRef<SVGSVGElement>(null)
@@ -299,13 +301,34 @@ export default function GraphVisualizer() {
     {mode:'delete',   label:'Delete Node',  color:'#ff4466'},
   ]
 
+  const handleEdgeClick = (e: React.MouseEvent, from: number, to: number) => {
+    e.stopPropagation()
+    if (running || editMode !== 'none') return
+    const edge = edges.find(ed => (ed.from===from&&ed.to===to)||(ed.from===to&&ed.to===from))
+    if (!edge) return
+    setEditingEdge({from, to})
+    setEditWeight(String(edge.weight))
+    setStatus('Editing edge ' + from + ' → ' + to + ' weight')
+  }
+
+  const saveEdgeWeight = () => {
+    const w = parseInt(editWeight)
+    if (isNaN(w) || w < 1) { setEditingEdge(null); return }
+    setEdges(prev => prev.map(e =>
+      (e.from===editingEdge!.from&&e.to===editingEdge!.to)||(e.from===editingEdge!.to&&e.to===editingEdge!.from)
+        ? {...e, weight: w} : e
+    ))
+    setStatus('Updated edge weight to ' + w)
+    setEditingEdge(null)
+  }
+
   return (
     <div className="min-h-screen pt-20 px-6 pb-10">
       <div className="max-w-6xl mx-auto">
 
         <motion.div initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} className="mb-8">
-          <h1 className="text-3xl font-bold mb-2" style={{fontFamily:'Syne, sans-serif',color:'#e8e8f0'}}>◎ Graph Visualizer</h1>
-          <p className="text-sm" style={{color:'#666'}}>Build your own graph, then watch BFS, DFS or Dijkstra traverse it</p>
+          <h1 className="text-2xl font-semibold mb-2" style={{fontFamily:'Inter, sans-serif',color:'var(--text-primary)'}}>◎ Graph Visualizer</h1>
+          <p className="text-sm" style={{color:'var(--text-muted)'}}>Build your own graph, then watch BFS, DFS or Dijkstra traverse it</p>
         </motion.div>
 
         <div className="grid grid-cols-3 gap-3 mb-6">
@@ -313,70 +336,70 @@ export default function GraphVisualizer() {
             <button key={algo} onClick={() => {if(!running) setAlgorithm(algo)}}
               className="glass-card p-4 text-left transition-all"
               style={{border:algorithm===algo?'1px solid #7c3aed44':'1px solid transparent',background:algorithm===algo?'#7c3aed0a':undefined}}>
-              <div className="text-sm font-semibold uppercase mb-1" style={{color:algorithm===algo?'#a78bfa':'#888',fontFamily:'Syne, sans-serif'}}>{algo}</div>
-              <div className="text-xs" style={{color:'#555',fontFamily:'JetBrains Mono, monospace'}}>{algoInfo[algo].time}</div>
+              <div className="text-sm font-semibold uppercase mb-1" style={{color:algorithm===algo?'#a78bfa':'var(--text-muted)',fontFamily:'Inter, sans-serif'}}>{algo}</div>
+              <div className="text-xs" style={{color:'var(--text-faint)',fontFamily:'JetBrains Mono, monospace'}}>{algoInfo[algo].time}</div>
             </button>
           ))}
         </div>
 
         <div className="glass-card p-4 mb-4 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex-1"><div className="text-xs mb-1" style={{color:'#555'}}>How it works</div>
-            <div className="text-sm" style={{color:'#aaa'}}>{algoInfo[algorithm].desc}</div></div>
+          <div className="flex-1"><div className="text-xs mb-1" style={{color:'var(--text-faint)'}}>How it works</div>
+            <div className="text-sm" style={{color:'var(--text-secondary)'}}>{algoInfo[algorithm].desc}</div></div>
           <div className="flex gap-4 flex-wrap items-center">
-            <div><div className="text-xs mb-1" style={{color:'#555'}}>Start</div>
+            <div><div className="text-xs mb-1" style={{color:'var(--text-faint)'}}>Start</div>
               <select value={startNode} onChange={e=>{if(!running)setStartNode(Number(e.target.value))}}
-                style={{background:'#0a0a0f',border:'1px solid #2a2a3e',color:'#00ff88',borderRadius:'6px',padding:'4px 8px',fontFamily:'JetBrains Mono, monospace',fontSize:'13px'}}>
+                style={{background:'var(--bg-primary)',border:'1px solid #2a2a3e',color:'#00ff88',borderRadius:'6px',padding:'4px 8px',fontFamily:'JetBrains Mono, monospace',fontSize:'13px'}}>
                 {nodes.map(n=><option key={n.id} value={n.id}>{n.id}</option>)}
               </select></div>
-            <div><div className="text-xs mb-1" style={{color:'#555'}}>End</div>
+            <div><div className="text-xs mb-1" style={{color:'var(--text-faint)'}}>End</div>
               <select value={endNode} onChange={e=>{if(!running)setEndNode(Number(e.target.value))}}
-                style={{background:'#0a0a0f',border:'1px solid #2a2a3e',color:'#ff4466',borderRadius:'6px',padding:'4px 8px',fontFamily:'JetBrains Mono, monospace',fontSize:'13px'}}>
+                style={{background:'var(--bg-primary)',border:'1px solid #2a2a3e',color:'#ff4466',borderRadius:'6px',padding:'4px 8px',fontFamily:'JetBrains Mono, monospace',fontSize:'13px'}}>
                 {nodes.map(n=><option key={n.id} value={n.id}>{n.id}</option>)}
               </select></div>
-            <div className="text-center"><div className="text-xs mb-1" style={{color:'#555'}}>Visited</div>
+            <div className="text-center"><div className="text-xs mb-1" style={{color:'var(--text-faint)'}}>Visited</div>
               <div className="text-sm font-bold" style={{color:'#7c3aed',fontFamily:'JetBrains Mono, monospace'}}>{visited.length}</div></div>
-            <div className="text-center"><div className="text-xs mb-1" style={{color:'#555'}}>Path</div>
+            <div className="text-center"><div className="text-xs mb-1" style={{color:'var(--text-faint)'}}>Path</div>
               <div className="text-sm font-bold" style={{color:'#00d4ff',fontFamily:'JetBrains Mono, monospace'}}>{path.length>0?path.length-1:0} steps</div></div>
           </div>
         </div>
 
         <div className="glass-card p-4 mb-4">
-          <div className="text-xs mb-3 font-semibold" style={{color:'#888',fontFamily:'Syne, sans-serif'}}>GRAPH EDITOR</div>
+          <div className="text-xs mb-3 font-semibold" style={{color:'var(--text-muted)',fontFamily:'Inter, sans-serif'}}>GRAPH EDITOR</div>
           <div className="flex flex-wrap gap-2 mb-3">
             {modeButtons.map(b => (
               <button key={b.mode} onClick={()=>{ if(running) return; setEditMode(editMode===b.mode?'none':b.mode); setEdgeFrom(null) }}
                 className="btn text-xs py-1.5 px-3"
                 style={{
-                  background: editMode===b.mode ? b.color+'22' : '#16161f',
+                  background: editMode===b.mode ? b.color+'22' : 'var(--bg-card)',
                   border: editMode===b.mode ? '1px solid '+b.color+'66' : '1px solid #2a2a3e',
-                  color: editMode===b.mode ? b.color : '#666',
+                  color: editMode===b.mode ? b.color : 'var(--text-muted)',
                 }}>
                 {b.label}{editMode===b.mode?' ✓':''}
               </button>
             ))}
             {editMode==='addEdge' && (
               <div className="flex items-center gap-2 ml-2">
-                <span className="text-xs" style={{color:'#555'}}>Weight:</span>
+                <span className="text-xs" style={{color:'var(--text-faint)'}}>Weight:</span>
                 <input type="number" min="1" max="99" value={edgeWeight}
                   onChange={e=>setEdgeWeight(e.target.value)}
-                  style={{width:'52px',padding:'4px 8px',borderRadius:'6px',background:'#0a0a0f',
+                  style={{width:'52px',padding:'4px 8px',borderRadius:'6px',background:'var(--bg-primary)',
                     border:'1px solid #2a2a3e',color:'#a78bfa',fontFamily:'JetBrains Mono, monospace',fontSize:'13px',outline:'none'}} />
               </div>
             )}
           </div>
-          <div className="text-xs" style={{color:'#555'}}>
+          <div className="text-xs" style={{color:'var(--text-faint)'}}>
             {editMode==='addNode' && '🖱 Click empty space on the graph to add a node'}
             {editMode==='addEdge' && (edgeFrom===null ? '🖱 Click first node to start edge' : '🖱 Now click target node (from: '+edgeFrom+')')}
             {editMode==='setStart' && '🖱 Click any node to set it as start'}
             {editMode==='setEnd' && '🖱 Click any node to set it as end'}
             {editMode==='delete' && '🖱 Click any node to delete it and its edges'}
-            {editMode==='none' && 'Select an edit mode above to modify the graph'}
+            {editMode==='none' && 'Select an edit mode above — or click any edge to edit its weight (useful for Dijkstra!)'}
           </div>
         </div>
 
         <div className="glass-card px-4 py-3 mb-4 flex items-center gap-3">
-          <div className="w-2 h-2 rounded-full flex-shrink-0" style={{background:running?'#00ff88':'#555',boxShadow:running?'0 0 8px #00ff8888':'none'}} />
-          <span style={{fontFamily:'JetBrains Mono, monospace',fontSize:'13px',color:status?'#e8e8f0':'#444'}}>
+          <div className="w-2 h-2 rounded-full flex-shrink-0" style={{background:running?'#00ff88':'var(--text-faint)',boxShadow:running?'0 0 8px #00ff8888':'none'}} />
+          <span style={{fontFamily:'JetBrains Mono, monospace',fontSize:'13px',color:status?'var(--text-primary)':'var(--text-faint)'}}>
             {status || 'Select algorithm and press Start...'}
           </span>
         </div>
@@ -391,11 +414,14 @@ export default function GraphVisualizer() {
               return (
                 <g key={i}>
                   <line x1={f.x} y1={f.y} x2={t.x} y2={t.y}
-                    stroke={isP?'#00d4ff':isV?'#7c3aed':edgeFrom!==null?'#2a2a3e44':'#2a2a3e'}
+                    onClick={e=>handleEdgeClick(e,edge.from,edge.to)}
+                    strokeWidth="12" stroke="transparent" style={{cursor:'pointer'}} />
+                  <line x1={f.x} y1={f.y} x2={t.x} y2={t.y}
+                    stroke={isP?'#00d4ff':isV?'#7c3aed':edgeFrom!==null?'#2a2a3e44':'var(--border)'}
                     strokeWidth={isP?3:isV?2:1.5} strokeOpacity={isP?1:isV?0.8:0.6}
                     style={{transition:'stroke 0.3s'}} />
                   <text x={mx} y={my-6} textAnchor="middle" fontSize="10"
-                    fill={isP?'#00d4ff':algorithm==='dijkstra'?'#555':'transparent'}
+                    fill={isP?'#00d4ff':algorithm==='dijkstra'?'var(--text-faint)':'transparent'}
                     fontFamily="JetBrains Mono, monospace">{edge.weight}</text>
                 </g>
               )
@@ -409,7 +435,7 @@ export default function GraphVisualizer() {
                     filter: edgeFrom===node.id?'drop-shadow(0 0 8px #7c3aed)':node.state!=='default'?'drop-shadow(0 0 6px '+getNodeStroke(node.state)+')':'none'}} />
                 <text x={node.x} y={node.y+1} textAnchor="middle" dominantBaseline="middle"
                   fontSize="13" fontWeight="600" fontFamily="JetBrains Mono, monospace"
-                  fill={node.state!=='default'?getNodeStroke(node.state):'#888'} style={{pointerEvents:'none'}}>
+                  fill={node.state!=='default'?getNodeStroke(node.state):'var(--text-muted)'} style={{pointerEvents:'none'}}>
                   {node.id}
                 </text>
                 {(node.id===startNode||node.id===endNode) && (
@@ -423,13 +449,32 @@ export default function GraphVisualizer() {
           </svg>
         </div>
 
+        {editingEdge && (
+          <div className="glass-card p-4 mb-4 flex items-center gap-4"
+            style={{border:'1px solid rgba(255,184,0,0.3)',background:'rgba(255,184,0,0.05)'}}>
+            <div className="text-sm" style={{color:'var(--text-primary)',fontFamily:'Inter, sans-serif'}}>
+              Edit edge <span style={{color:'var(--accent-amber)'}}>{editingEdge.from} → {editingEdge.to}</span> weight:
+            </div>
+            <input type="number" value={editWeight} onChange={e=>setEditWeight(e.target.value)}
+              min="1" max="99" autoFocus
+              onKeyDown={e=>{ if(e.key==='Enter') saveEdgeWeight(); if(e.key==='Escape') setEditingEdge(null) }}
+              style={{width:'70px',padding:'6px 10px',borderRadius:'6px',background:'var(--bg-input)',
+                border:'1px solid var(--accent-amber)',color:'var(--text-primary)',
+                fontFamily:'JetBrains Mono, monospace',fontSize:'14px',outline:'none'}} />
+            <button onClick={saveEdgeWeight} className="btn btn-amber text-xs py-1.5">Save</button>
+            <button onClick={()=>setEditingEdge(null)} className="btn text-xs py-1.5"
+              style={{background:'transparent',border:'1px solid var(--border)',color:'var(--text-muted)'}}>Cancel</button>
+            <span className="text-xs" style={{color:'var(--text-faint)'}}>Press Enter to save, Escape to cancel</span>
+          </div>
+        )}
+
         <div className="flex gap-4 mb-6 flex-wrap">
-          {[{c:'#1e1e2e',s:'#2a2a3e',l:'Unvisited'},{c:'#00ff8833',s:'#00ff88',l:'Start'},
+          {[{c:'var(--border)',s:'var(--border)',l:'Unvisited'},{c:'#00ff8833',s:'#00ff88',l:'Start'},
             {c:'#ff446633',s:'#ff4466',l:'End'},{c:'#ffb80033',s:'#ffb800',l:'Current'},
             {c:'#7c3aed33',s:'#7c3aed',l:'Visited'},{c:'#00d4ff33',s:'#00d4ff',l:'Shortest Path'}].map(l=>(
             <div key={l.l} className="flex items-center gap-2">
               <div className="w-4 h-4 rounded-full border-2" style={{background:l.c,borderColor:l.s}} />
-              <span className="text-xs" style={{color:'#666'}}>{l.l}</span>
+              <span className="text-xs" style={{color:'var(--text-muted)'}}>{l.l}</span>
             </div>
           ))}
         </div>
@@ -437,7 +482,7 @@ export default function GraphVisualizer() {
         <div className="glass-card p-6">
           <div className="flex flex-wrap items-center gap-6 mb-6">
             <div className="flex-1 min-w-40">
-              <div className="flex justify-between text-xs mb-2" style={{color:'#666'}}>
+              <div className="flex justify-between text-xs mb-2" style={{color:'var(--text-muted)'}}>
                 <span>Speed</span><span style={{color:'#a78bfa'}}>{speed}%</span>
               </div>
               <input type="range" min="1" max="100" value={speed} onChange={e=>setSpeed(Number(e.target.value))} disabled={running} />

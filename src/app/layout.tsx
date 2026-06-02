@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'AlgoVis — Algorithm Visualizer',
-  description: 'Interactive DSA Algorithm Visualizer & Coding Practice Platform',
+  title: 'AlgoVis — Interactive Algorithm Visualizer',
+  description: 'Learn DSA by watching algorithms work in real time. Sorting, graphs, trees, search and more.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

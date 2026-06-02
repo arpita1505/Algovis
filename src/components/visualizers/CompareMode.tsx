@@ -210,8 +210,8 @@ export default function CompareMode() {
     <div className="min-h-screen pt-20 px-6 pb-10">
       <div className="max-w-6xl mx-auto">
         <motion.div initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} className="mb-8">
-          <h1 className="text-3xl font-bold mb-2" style={{fontFamily:'Syne, sans-serif',color:'#e8e8f0'}}>⇌ Algorithm Race</h1>
-          <p className="text-sm" style={{color:'#666'}}>Two algorithms, same array, running simultaneously — may the best win!</p>
+          <h1 className="text-2xl font-semibold mb-2" style={{fontFamily:'Inter, sans-serif',color:'var(--text-primary)'}}>⇌ Algorithm Race</h1>
+          <p className="text-sm" style={{color:'var(--text-muted)'}}>Two algorithms, same array, running simultaneously — may the best win!</p>
         </motion.div>
 
         <div className="grid grid-cols-2 gap-4 mb-6">
@@ -222,11 +222,11 @@ export default function CompareMode() {
             <div key={p.side} className="glass-card p-5"
               style={{border:p.isWinner?'1px solid #00ff8844':'1px solid rgba(255,255,255,0.06)',background:p.isWinner?'#00ff8808':undefined}}>
               <div className="flex items-center justify-between mb-3">
-                <div className="text-sm font-bold" style={{fontFamily:'Syne, sans-serif',color:p.side==='A'?'#00d4ff':'#ff2d78'}}>
+                <div className="text-sm font-bold" style={{fontFamily:'Inter, sans-serif',color:p.side==='A'?'#00d4ff':'#ff2d78'}}>
                   Algorithm {p.side} {p.isWinner&&'🏆'}
                 </div>
                 {p.time!==null&&(
-                  <div className="text-xs px-2 py-1 rounded" style={{background:p.isWinner?'#00ff8822':'#ffffff11',color:p.isWinner?'#00ff88':'#888',fontFamily:'JetBrains Mono, monospace'}}>
+                  <div className="text-xs px-2 py-1 rounded" style={{background:p.isWinner?'#00ff8822':'#ffffff11',color:p.isWinner?'#00ff88':'var(--text-muted)',fontFamily:'JetBrains Mono, monospace'}}>
                     {p.time}ms
                   </div>
                 )}
@@ -235,19 +235,19 @@ export default function CompareMode() {
                 {(['bubble','quick','merge','heap'] as Algorithm[]).map(algo => (
                   <button key={algo} onClick={()=>{if(!running)p.setAlgo(algo)}}
                     className="p-2 rounded-lg text-xs text-left transition-all"
-                    style={{background:p.algo===algo?algoInfo[algo].color+'22':'#0a0a0f',
+                    style={{background:p.algo===algo?algoInfo[algo].color+'22':'var(--bg-primary)',
                       border:p.algo===algo?'1px solid '+algoInfo[algo].color+'44':'1px solid #2a2a3e',
-                      color:p.algo===algo?algoInfo[algo].color:'#555'}}>
+                      color:p.algo===algo?algoInfo[algo].color:'var(--text-faint)'}}>
                     <div className="font-semibold capitalize">{algo}</div>
                     <div style={{fontFamily:'JetBrains Mono, monospace',fontSize:'10px',opacity:0.7}}>{algoInfo[algo].time}</div>
                   </button>
                 ))}
               </div>
               <div className="flex gap-4">
-                <div><div className="text-xs" style={{color:'#555'}}>Operations</div>
+                <div><div className="text-xs" style={{color:'var(--text-faint)'}}>Operations</div>
                   <div className="text-lg font-bold" style={{color:'#ffb800',fontFamily:'JetBrains Mono, monospace'}}>{p.ops.toLocaleString()}</div>
                 </div>
-                {p.time!==null&&<div><div className="text-xs" style={{color:'#555'}}>Time</div>
+                {p.time!==null&&<div><div className="text-xs" style={{color:'var(--text-faint)'}}>Time</div>
                   <div className="text-lg font-bold" style={{color:'#00d4ff',fontFamily:'JetBrains Mono, monospace'}}>{p.time}ms</div>
                 </div>}
               </div>
@@ -259,17 +259,17 @@ export default function CompareMode() {
           <motion.div initial={{opacity:0,scale:0.9}} animate={{opacity:1,scale:1}}
             className="glass-card p-4 mb-6 text-center"
             style={{border:'1px solid #00ff8844',background:'#00ff8808'}}>
-            <div className="text-lg font-bold mb-1" style={{fontFamily:'Syne, sans-serif',color:'#00ff88'}}>
+            <div className="text-lg font-bold mb-1" style={{fontFamily:'Inter, sans-serif',color:'#00ff88'}}>
               {winner==='tie'?'🤝 Tie!'
                 :winner==='A'?'🏆 Algorithm A Wins! ('+algoA+')'
                 :'🏆 Algorithm B Wins! ('+algoB+')'}
             </div>
             {winner!=='tie'&&timeA!==null&&timeB!==null&&(
-              <div className="text-sm" style={{color:'#888'}}>
+              <div className="text-sm" style={{color:'var(--text-muted)'}}>
                 {winner==='A'?algoA:algoB} finished {Math.abs(timeA-timeB)}ms faster
               </div>
             )}
-            <div className="text-xs mt-1" style={{color:'#555'}}>
+            <div className="text-xs mt-1" style={{color:'var(--text-faint)'}}>
               Operations — {algoA}: {opsA.toLocaleString()} vs {algoB}: {opsB.toLocaleString()}
               {opsA!==opsB&&<span style={{color:'#00ff88'}}> ({opsA<opsB?algoA:algoB} used {Math.abs(opsA-opsB).toLocaleString()} fewer ops)</span>}
             </div>
@@ -280,9 +280,9 @@ export default function CompareMode() {
           {[{bars:barsA,side:'A',algo:algoA},{bars:barsB,side:'B',algo:algoB}].map(p => (
             <div key={p.side} className="glass-card p-4">
               <div className="text-xs font-semibold mb-3 flex justify-between"
-                style={{fontFamily:'Syne, sans-serif',color:p.side==='A'?'#00d4ff':'#ff2d78'}}>
+                style={{fontFamily:'Inter, sans-serif',color:p.side==='A'?'#00d4ff':'#ff2d78'}}>
                 <span>{p.algo.charAt(0).toUpperCase()+p.algo.slice(1)} Sort</span>
-                <span style={{color:'#555',fontFamily:'JetBrains Mono, monospace'}}>{algoInfo[p.algo].time}</span>
+                <span style={{color:'var(--text-faint)',fontFamily:'JetBrains Mono, monospace'}}>{algoInfo[p.algo].time}</span>
               </div>
               <BarChart bars={p.bars} showVals={showVals && arraySize <= 30} />
             </div>
@@ -290,17 +290,17 @@ export default function CompareMode() {
         </div>
 
         <div className="glass-card p-5 mb-4">
-          <div className="text-sm font-semibold mb-3" style={{color:'#e8e8f0',fontFamily:'Syne, sans-serif'}}>✏️ Custom Array</div>
+          <div className="text-sm font-semibold mb-3" style={{color:'var(--text-primary)',fontFamily:'Inter, sans-serif'}}>✏️ Custom Array</div>
           <div className="flex gap-2 flex-wrap items-start">
             <div className="flex-1 min-w-48">
               <input type="text" value={customInput} onChange={e=>setCustomInput(e.target.value)}
                 placeholder="e.g. 64, 34, 25, 12, 22, 11, 90" disabled={running}
                 onKeyDown={e=>e.key==='Enter'&&applyCustom()}
-                style={{width:'100%',padding:'10px 14px',borderRadius:'8px',background:'#0a0a0f',
-                  border:'1px solid #2a2a3e',color:'#e8e8f0',fontFamily:'JetBrains Mono, monospace',
+                style={{width:'100%',padding:'10px 14px',borderRadius:'8px',background:'var(--bg-primary)',
+                  border:'1px solid #2a2a3e',color:'var(--text-primary)',fontFamily:'JetBrains Mono, monospace',
                   fontSize:'13px',outline:'none'}} />
               {customError&&<p className="text-xs mt-1" style={{color:'#ff4466'}}>{customError}</p>}
-              <p className="text-xs mt-1" style={{color:'#555'}}>Both algorithms will race on your exact array</p>
+              <p className="text-xs mt-1" style={{color:'var(--text-faint)'}}>Both algorithms will race on your exact array</p>
             </div>
             <button onClick={applyCustom} disabled={running} className="btn btn-violet">Apply to Both</button>
           </div>
@@ -309,22 +309,22 @@ export default function CompareMode() {
         <div className="glass-card p-6">
           <div className="flex flex-wrap items-center gap-6 mb-4">
             <div className="flex-1 min-w-40">
-              <div className="flex justify-between text-xs mb-2" style={{color:'#666'}}>
+              <div className="flex justify-between text-xs mb-2" style={{color:'var(--text-muted)'}}>
                 <span>Speed</span><span style={{color:'#00d4ff'}}>{speed}%</span>
               </div>
               <input type="range" min="1" max="100" value={speed} onChange={e=>setSpeed(Number(e.target.value))} disabled={running} />
             </div>
             <div className="flex-1 min-w-40">
-              <div className="flex justify-between text-xs mb-2" style={{color:'#666'}}>
+              <div className="flex justify-between text-xs mb-2" style={{color:'var(--text-muted)'}}>
                 <span>Array Size</span><span style={{color:'#00d4ff'}}>{arraySize}</span>
               </div>
               <input type="range" min="5" max="60" value={arraySize} onChange={e=>setArraySize(Number(e.target.value))} disabled={running} />
             </div>
             <div>
-              <div className="text-xs mb-2" style={{color:'#666'}}>Show Values</div>
+              <div className="text-xs mb-2" style={{color:'var(--text-muted)'}}>Show Values</div>
               <button onClick={()=>setShowVals(!showVals)} disabled={running}
                 className="btn text-xs"
-                style={{background:showVals?'#00d4ff22':'#16161f',border:showVals?'1px solid #00d4ff44':'1px solid #2a2a3e',color:showVals?'#00d4ff':'#555'}}>
+                style={{background:showVals?'#00d4ff22':'var(--bg-card)',border:showVals?'1px solid #00d4ff44':'1px solid #2a2a3e',color:showVals?'#00d4ff':'var(--text-faint)'}}>
                 {showVals?'ON':'OFF'}
               </button>
             </div>

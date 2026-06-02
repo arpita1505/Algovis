@@ -14,6 +14,28 @@ interface TreeNode {
 interface VisualNode { value: number; x: number; y: number; state: NodeState; id: string }
 interface VisualEdge { x1: number; y1: number; x2: number; y2: number }
 
+
+function getHeight(node: TreeNode | null): number {
+  if (!node) return 0
+  return 1 + Math.max(getHeight(node.left), getHeight(node.right))
+}
+
+function countNodes(node: TreeNode | null): number {
+  if (!node) return 0
+  return 1 + countNodes(node.left) + countNodes(node.right)
+}
+
+function isBalanced(node: TreeNode | null): boolean {
+  if (!node) return true
+  const lh = getHeight(node.left)
+  const rh = getHeight(node.right)
+  return Math.abs(lh - rh) <= 1 && isBalanced(node.left) && isBalanced(node.right)
+}
+
+function getMinHeight(node: TreeNode | null): number {
+  if (!node) return 0
+  return 1 + Math.min(getMinHeight(node.left), getMinHeight(node.right))
+}
 function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)) }
 
 function insertBST(root: TreeNode | null, val: number): TreeNode {
@@ -101,7 +123,7 @@ function getNodeFill(state: NodeState) {
   if (state === 'inserted')  return '#00d4ff33'
   if (state === 'deleted')   return '#ff446633'
   if (state === 'path')      return '#7c3aed33'
-  return '#1e1e2e'
+  return 'var(--border)'
 }
 function getNodeStroke(state: NodeState) {
   if (state === 'comparing') return '#ffb800'
@@ -109,7 +131,7 @@ function getNodeStroke(state: NodeState) {
   if (state === 'inserted')  return '#00d4ff'
   if (state === 'deleted')   return '#ff4466'
   if (state === 'path')      return '#7c3aed'
-  return '#2a2a3e'
+  return 'var(--border)'
 }
 
 export default function TreeVisualizer() {
@@ -309,18 +331,18 @@ export default function TreeVisualizer() {
       <div className="max-w-6xl mx-auto">
 
         <motion.div initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} className="mb-8">
-          <h1 className="text-3xl font-bold mb-2" style={{fontFamily:'Syne, sans-serif',color:'#e8e8f0'}}>⟁ BST Visualizer</h1>
-          <p className="text-sm" style={{color:'#666'}}>Watch every comparison as values are inserted, searched and deleted step by step</p>
+          <h1 className="text-2xl font-semibold mb-2" style={{fontFamily:'Inter, sans-serif',color:'var(--text-primary)'}}>⟁ BST Visualizer</h1>
+          <p className="text-sm" style={{color:'var(--text-muted)'}}>Watch every comparison as values are inserted, searched and deleted step by step</p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div className="glass-card p-5">
-            <div className="text-sm font-semibold mb-3" style={{color:'#e8e8f0',fontFamily:'Syne, sans-serif'}}>Single Operation</div>
+            <div className="text-sm font-semibold mb-3" style={{color:'var(--text-primary)',fontFamily:'Inter, sans-serif'}}>Single Operation</div>
             <input type="number" value={inputVal} onChange={e=>setInputVal(e.target.value)}
               placeholder="Enter a number..." disabled={running}
               onKeyDown={e=>e.key==='Enter'&&handleInsert()}
-              style={{width:'100%',padding:'10px 14px',borderRadius:'8px',background:'#0a0a0f',
-                border:'1px solid #2a2a3e',color:'#e8e8f0',fontFamily:'JetBrains Mono, monospace',
+              style={{width:'100%',padding:'10px 14px',borderRadius:'8px',background:'var(--bg-primary)',
+                border:'1px solid #2a2a3e',color:'var(--text-primary)',fontFamily:'JetBrains Mono, monospace',
                 fontSize:'13px',outline:'none',marginBottom:'10px'}} />
             <div className="flex gap-2 flex-wrap">
               <button onClick={handleInsert} disabled={running} className="btn btn-green text-xs">+ Insert</button>
@@ -331,20 +353,20 @@ export default function TreeVisualizer() {
           </div>
 
           <div className="glass-card p-5">
-            <div className="text-sm font-semibold mb-3" style={{color:'#e8e8f0',fontFamily:'Syne, sans-serif'}}>Bulk Insert</div>
+            <div className="text-sm font-semibold mb-3" style={{color:'var(--text-primary)',fontFamily:'Inter, sans-serif'}}>Bulk Insert</div>
             <input type="text" value={bulkInput} onChange={e=>setBulkInput(e.target.value)}
               placeholder="e.g. 50, 30, 70, 20, 40, 60, 80" disabled={running}
               onKeyDown={e=>e.key==='Enter'&&handleBulkInsert()}
-              style={{width:'100%',padding:'10px 14px',borderRadius:'8px',background:'#0a0a0f',
-                border:'1px solid #2a2a3e',color:'#e8e8f0',fontFamily:'JetBrains Mono, monospace',
+              style={{width:'100%',padding:'10px 14px',borderRadius:'8px',background:'var(--bg-primary)',
+                border:'1px solid #2a2a3e',color:'var(--text-primary)',fontFamily:'JetBrains Mono, monospace',
                 fontSize:'13px',outline:'none',marginBottom:'10px'}} />
             <button onClick={handleBulkInsert} disabled={running} className="btn btn-violet text-xs">Insert All at Once</button>
-            <p className="text-xs mt-2" style={{color:'#555'}}>Builds tree instantly without animation</p>
+            <p className="text-xs mt-2" style={{color:'var(--text-faint)'}}>Builds tree instantly without animation</p>
           </div>
         </div>
 
         <div className="glass-card p-4 mb-4">
-          <div className="text-sm font-semibold mb-3" style={{color:'#e8e8f0',fontFamily:'Syne, sans-serif'}}>Traversals</div>
+          <div className="text-sm font-semibold mb-3" style={{color:'var(--text-primary)',fontFamily:'Inter, sans-serif'}}>Traversals</div>
           <div className="flex gap-2 flex-wrap mb-3">
             {[
               {t:'inorder',   desc:'Left → Root → Right (gives sorted order!)'},
@@ -353,11 +375,11 @@ export default function TreeVisualizer() {
             ].map(({t,desc}) => (
               <button key={t} onClick={()=>handleTraverse(t)} disabled={running}
                 className="btn text-xs py-1.5 px-3"
-                style={{background:traversalType===t?'#00d4ff22':'#16161f',
+                style={{background:traversalType===t?'#00d4ff22':'var(--bg-card)',
                   border:traversalType===t?'1px solid #00d4ff44':'1px solid #2a2a3e',
-                  color:traversalType===t?'#00d4ff':'#666'}}>
+                  color:traversalType===t?'#00d4ff':'var(--text-muted)'}}>
                 {t.charAt(0).toUpperCase()+t.slice(1)}
-                <span style={{color:'#444',fontSize:'10px',marginLeft:'4px'}}>{desc}</span>
+                <span style={{color:'var(--text-faint)',fontSize:'10px',marginLeft:'4px'}}>{desc}</span>
               </button>
             ))}
           </div>
@@ -368,23 +390,59 @@ export default function TreeVisualizer() {
                   <span className="px-2 py-1 rounded text-xs"
                     style={{background:'#00d4ff11',border:'1px solid #00d4ff22',
                       color:'#00d4ff',fontFamily:'JetBrains Mono, monospace'}}>{v}</span>
-                  {i < traversalResult.length-1 && <span style={{color:'#333',fontSize:'10px'}}>→</span>}
+                  {i < traversalResult.length-1 && <span style={{color:'var(--text-faint)',fontSize:'10px'}}>→</span>}
                 </div>
               ))}
             </div>
           )}
         </div>
 
+        {root && (() => {
+          const h = getHeight(root)
+          const n = countNodes(root)
+          const balanced = isBalanced(root)
+          const minH = getMinHeight(root)
+          const skewPct = Math.round(((h - minH) / Math.max(h, 1)) * 100)
+          return (
+            <div className="glass-card px-4 py-3 mb-4 flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">{balanced ? '✅' : '⚠️'}</span>
+                <div>
+                  <div className="text-xs font-semibold" style={{color: balanced ? 'var(--accent-green)' : 'var(--accent-amber)'}}>
+                    {balanced ? 'Balanced Tree' : 'Unbalanced / Skewed Tree'}
+                  </div>
+                  <div className="text-xs" style={{color:'var(--text-faint)'}}>
+                    {balanced ? 'Height is optimal for O(log n) operations' : 'Operations may degrade to O(n) — consider AVL or Red-Black tree'}
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-4 ml-auto flex-wrap">
+                {[
+                  {label:'Height',   val:String(h),    color:'var(--accent-primary)'},
+                  {label:'Nodes',    val:String(n),    color:'var(--accent-violet)'},
+                  {label:'Min Height', val:String(minH), color:'var(--accent-green)'},
+                  {label:'Skew',     val:skewPct+'%',  color: skewPct > 30 ? 'var(--accent-red)' : 'var(--accent-green)'},
+                ].map(item => (
+                  <div key={item.label} className="text-center">
+                    <div className="text-xs" style={{color:'var(--text-faint)'}}>{item.label}</div>
+                    <div className="text-sm font-bold" style={{color:item.color,fontFamily:'JetBrains Mono, monospace'}}>{item.val}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        })()}
+
         <div className="glass-card px-4 py-3 mb-4 flex items-center gap-3" style={{minHeight:'48px'}}>
           <div className="w-2 h-2 rounded-full flex-shrink-0"
-            style={{background:running?'#00ff88':'#555',boxShadow:running?'0 0 8px #00ff8888':'none'}} />
-          <span style={{fontFamily:'JetBrains Mono, monospace',fontSize:'13px',color:status?'#e8e8f0':'#444'}}>
+            style={{background:running?'#00ff88':'var(--text-faint)',boxShadow:running?'0 0 8px #00ff8888':'none'}} />
+          <span style={{fontFamily:'JetBrains Mono, monospace',fontSize:'13px',color:status?'var(--text-primary)':'var(--text-faint)'}}>
             {status || 'Insert a value to start building your BST...'}
           </span>
         </div>
 
         <div className="glass-card p-4 mb-4">
-          <div className="flex justify-between text-xs mb-2" style={{color:'#666'}}>
+          <div className="flex justify-between text-xs mb-2" style={{color:'var(--text-muted)'}}>
             <span>Animation Speed</span>
             <span style={{color:'#00d4ff'}}>{speed}%</span>
           </div>
@@ -395,9 +453,9 @@ export default function TreeVisualizer() {
         <div className="glass-card p-6 mb-6" style={{minHeight:'440px',overflowX:'auto',overflowY:'auto'}}>
           {!root ? (
             <div className="flex flex-col items-center justify-center h-64 gap-3">
-              <div className="text-5xl" style={{color:'#2a2a3e'}}>⟁</div>
-              <div className="text-sm" style={{color:'#444'}}>Tree is empty</div>
-              <div className="text-xs" style={{color:'#333'}}>Try inserting: 50, 30, 70, 20, 40</div>
+              <div className="text-5xl" style={{color:'var(--border)'}}>⟁</div>
+              <div className="text-sm" style={{color:'var(--text-faint)'}}>Tree is empty</div>
+              <div className="text-xs" style={{color:'var(--text-faint)'}}>Try inserting: 50, 30, 70, 20, 40</div>
             </div>
           ) : (
             <svg width="100%" height={Math.max(440, depth * 80 + 60)} viewBox={"0 0 600 " + Math.max(440, depth * 80 + 60)} style={{overflow:'visible'}}>
@@ -415,7 +473,7 @@ export default function TreeVisualizer() {
                       filter:node.state!=='default'?'drop-shadow(0 0 8px '+getNodeStroke(node.state)+')':'none'}} />
                   <text x={node.x} y={node.y+1} textAnchor="middle" dominantBaseline="middle"
                     fontSize="12" fontWeight="600" fontFamily="JetBrains Mono, monospace"
-                    fill={node.state!=='default'?getNodeStroke(node.state):'#888'}
+                    fill={node.state!=='default'?getNodeStroke(node.state):'var(--text-muted)'}
                     style={{pointerEvents:'none'}}>
                     {node.value}
                   </text>
@@ -433,7 +491,7 @@ export default function TreeVisualizer() {
             {c:'#ff4466',l:'Being deleted'}].map(l=>(
             <div key={l.l} className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full" style={{background:l.c,boxShadow:'0 0 6px '+l.c+'66'}} />
-              <span className="text-xs" style={{color:'#666'}}>{l.l}</span>
+              <span className="text-xs" style={{color:'var(--text-muted)'}}>{l.l}</span>
             </div>
           ))}
         </div>

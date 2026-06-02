@@ -1,126 +1,83 @@
 'use client'
 import { motion } from 'framer-motion'
 
-type Section = 'home' | 'sorting' | 'graph' | 'tree' | 'search' | 'compare' | 'dashboard'
+type Section = 'home' | 'sorting' | 'graph' | 'tree' | 'search' | 'compare' | 'dashboard' | 'problems'
 
 const cards = [
-  { id: 'sorting'   as Section, icon: '▦', title: 'Sorting',   desc: 'Bubble · Merge · Quick · Heap',    color: '#00d4ff' },
-  { id: 'graph'     as Section, icon: '◎', title: 'Graph',     desc: 'BFS · DFS · Dijkstra',             color: '#7c3aed' },
-  { id: 'tree'      as Section, icon: '⟁', title: 'Tree',      desc: 'BST · Insert · Delete · Search',   color: '#00ff88' },
-  { id: 'search'    as Section, icon: '⌕', title: 'Search',    desc: 'Binary Search · Linear Search',    color: '#ffb800' },
-  { id: 'compare'   as Section, icon: '⇌', title: 'Compare',   desc: 'Race algorithms side by side',     color: '#ff2d78' },
-  { id: 'dashboard' as Section, icon: '▤', title: 'Dashboard', desc: 'Track your progress & weak spots', color: '#ff4466' },
+  { id: 'sorting'   as Section, title: 'Sorting',   desc: 'Bubble · Merge · Quick · Heap',  tag: 'Step-by-step animation',  icon: '⟤' },
+  { id: 'graph'     as Section, title: 'Graph',     desc: 'BFS · DFS · Dijkstra',           tag: 'Custom graph builder',    icon: '◎' },
+  { id: 'tree'      as Section, title: 'BST',       desc: 'Insert · Delete · Search',       tag: 'Balance indicator',       icon: '⋔' },
+  { id: 'search'    as Section, title: 'Search',    desc: 'Binary · Linear',                tag: 'Live complexity compare', icon: '⌕' },
+  { id: 'compare'   as Section, title: 'Race Mode', desc: 'Two algorithms, same array',     tag: 'See who wins',            icon: '⇌' },
+  { id: 'dashboard' as Section, title: 'Reference', desc: 'Complexity charts · Tips',       tag: 'Interview prep guide',    icon: '▤' },
 ]
 
 export default function Hero({ setActive }: { setActive: (s: Section) => void }) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 pt-24 pb-16">
-      <div className="fixed top-1/4 left-1/4 w-96 h-96 rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, #00d4ff08 0%, transparent 70%)', filter: 'blur(40px)' }} />
-      <div className="fixed bottom-1/4 right-1/4 w-96 h-96 rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, #7c3aed08 0%, transparent 70%)', filter: 'blur(40px)' }} />
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 pt-24 pb-16 relative">
+      <div className="hero-blob-1" />
+      <div className="hero-blob-2" />
 
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
-        className="text-center mb-16 max-w-3xl"
-      >
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs mb-6"
-          style={{ background: '#00d4ff0a', border: '1px solid #00d4ff22', color: '#00d4ff', fontFamily: 'JetBrains Mono, monospace' }}>
-          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-          Interactive · Visual · Educational
-        </div>
+      <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.55 }} className="text-center mb-14 max-w-2xl relative z-10">
 
-        <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight"
-          style={{ fontFamily: 'Syne, sans-serif' }}>
-          <span style={{ color: '#e8e8f0' }}>Learn </span>
-          <span style={{ color: '#00d4ff', textShadow: '0 0 20px #00d4ff66' }}>Algorithms</span>
+        {/* Heading */}
+        <motion.h1 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          style={{ fontFamily: 'Inter, sans-serif', fontSize: 'clamp(2.4rem, 5.5vw, 4rem)', lineHeight: 1.1, color: 'var(--text-primary)', marginBottom: '1.25rem', letterSpacing: '-0.04em', fontWeight: 700 }}>
+          The visual way to
           <br />
-          <span style={{ color: '#e8e8f0' }}>by </span>
-          <span style={{ color: '#7c3aed', textShadow: '0 0 20px #7c3aed66' }}>Seeing</span>
-          <span style={{ color: '#e8e8f0' }}> Them</span>
-        </h1>
+          <span style={{ color: 'var(--accent-primary)' }}>master algorithms</span>
+        </motion.h1>
 
-        <p className="text-lg mb-8 max-w-xl mx-auto"
-          style={{ color: '#888', fontFamily: 'DM Sans, sans-serif', lineHeight: 1.7 }}>
-          Step through every comparison, swap, and traversal in real time.
-          Built for students who want to truly understand DSA.
-        </p>
+        {/* Subtext */}
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
+          style={{ fontSize: '15px', lineHeight: 1.7, color: 'var(--text-muted)', fontFamily: 'Inter', maxWidth: '420px', margin: '0 auto 2.5rem', fontWeight: 400 }}>
+          Watch every comparison, swap and traversal in real time.
+          10+ algorithms, custom inputs, step-by-step controls.
+        </motion.p>
 
-        <div className="flex items-center justify-center gap-4 flex-wrap">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+        {/* CTA buttons */}
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="flex items-center justify-center gap-3 flex-wrap">
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
             onClick={() => setActive('sorting')}
-            className="btn btn-primary px-8 py-3 text-base"
-            style={{ borderRadius: '12px' }}
-          >
-            Start Visualizing →
+            style={{ background: 'var(--accent-primary)', color: '#fff', border: 'none', borderRadius: '8px', padding: '11px 28px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter', boxShadow: '0 4px 14px rgba(37,99,235,0.3)', letterSpacing: '-0.01em' }}>
+            Start visualizing →
           </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
             onClick={() => setActive('compare')}
-            className="btn btn-violet px-8 py-3 text-base"
-            style={{ borderRadius: '12px' }}
-          >
-            ⇌ Compare Algorithms
+            style={{ background: 'var(--bg-card)', color: 'var(--text-secondary)', border: '1px solid var(--border)', borderRadius: '8px', padding: '11px 28px', fontSize: '14px', fontWeight: 500, cursor: 'pointer', fontFamily: 'Inter', letterSpacing: '-0.01em' }}>
+            ⇌ Race algorithms
           </motion.button>
-        </div>
+        </motion.div>
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.2 }}
-        className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-4xl"
-      >
+      {/* Cards */}
+      <motion.div initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.55, delay: 0.2 }}
+        className="grid grid-cols-2 md:grid-cols-3 gap-3 w-full max-w-3xl relative z-10">
         {cards.map((card, i) => (
-          <motion.button
-            key={card.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 * i + 0.3 }}
-            whileHover={{ scale: 1.03, y: -4 }}
-            whileTap={{ scale: 0.97 }}
+          <motion.button key={card.id}
+            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.07 * i + 0.25 }}
+            whileHover={{ y: -3, boxShadow: '0 8px 24px rgba(37,99,235,0.12)' }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setActive(card.id)}
-            className="glass-card p-6 text-left cursor-pointer"
-            style={{ border: `1px solid ${card.color}22` }}
-          >
-            <div className="text-3xl mb-3" style={{ color: card.color }}>{card.icon}</div>
-            <div className="text-base font-semibold mb-1"
-              style={{ fontFamily: 'Syne, sans-serif', color: '#e8e8f0' }}>
+            className="glass-card p-5 text-left cursor-pointer">
+            <div className="text-xl mb-3" style={{ color: 'var(--accent-primary)' }}>{card.icon}</div>
+            <div className="text-sm font-semibold mb-1 tracking-tight" style={{ color: 'var(--text-primary)', fontFamily: 'Inter', letterSpacing: '-0.02em' }}>
               {card.title}
             </div>
-            <div className="text-xs" style={{ color: '#666' }}>{card.desc}</div>
-            <div className="mt-4 text-xs font-medium"
-              style={{ color: card.color, fontFamily: 'JetBrains Mono, monospace' }}>
-              Open →
+            <div className="text-xs mb-3" style={{ color: 'var(--text-muted)', fontFamily: 'Inter' }}>
+              {card.desc}
             </div>
+            <div className="tag">{card.tag}</div>
           </motion.button>
         ))}
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.9 }}
-        className="flex items-center gap-8 mt-16 flex-wrap justify-center"
-      >
-        {[
-          { val: '10+',          label: 'Algorithms' },
-          { val: 'Real-time',    label: 'Step Control' },
-          { val: 'Side-by-side', label: 'Compare Mode' },
-          { val: '100%',         label: 'Free & Open' },
-        ].map((s) => (
-          <div key={s.label} className="text-center">
-            <div className="text-xl font-bold"
-              style={{ fontFamily: 'Syne, sans-serif', color: '#00d4ff', textShadow: '0 0 20px #00d4ff66' }}>{s.val}</div>
-            <div className="text-xs mt-1" style={{ color: '#555' }}>{s.label}</div>
-          </div>
-        ))}
-      </motion.div>
     </div>
   )
 }
