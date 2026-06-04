@@ -403,7 +403,13 @@ const difficultyColor = (d: Difficulty) => {
 }
 
 export default function Problems() {
-  const [statuses, setStatuses] = useState<Record<number, Status>>({})
+  const [statuses, setStatuses] = useState<Record<number, Status>>(() => {
+    if (typeof window === 'undefined') return {}
+    try {
+      const saved = localStorage.getItem('algovis-problem-statuses')
+      return saved ? JSON.parse(saved) : {}
+    } catch { return {} }
+  })
   const [selected, setSelected] = useState<Problem>(problems[0])
   const [filter, setFilter] = useState<'All' | Difficulty>('All')
   const [categoryFilter, setCategoryFilter] = useState<'All' | Category>('All')
@@ -412,10 +418,14 @@ export default function Problems() {
   const [search, setSearch] = useState('')
 
   const toggleStatus = (id: number) => {
-    setStatuses(prev => ({
-      ...prev,
-      [id]: prev[id] === 'solved' ? 'unsolved' : prev[id] === 'attempted' ? 'solved' : 'attempted'
-    }))
+    setStatuses(prev => {
+      const next = {
+        ...prev,
+        [id]: prev[id] === 'solved' ? 'unsolved' : prev[id] === 'attempted' ? 'solved' : 'attempted'
+      }
+      try { localStorage.setItem('algovis-problem-statuses', JSON.stringify(next)) } catch {}
+      return next
+    })
   }
 
   const categories: ('All' | Category)[] = ['All','Array','String','Tree','Graph','Dynamic Programming','Sorting','Linked List','Stack/Queue','Binary Search','Backtracking','Heap','Math']
